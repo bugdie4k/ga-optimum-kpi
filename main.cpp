@@ -33,7 +33,7 @@ class Chromosome {
      double res;
 
      void set(vector<double> argv, double res);
-     void randomize(int argn, double from, double to);
+     void randomize(int argn, double from, double to, double (*fn)(vector<double>));
      int size();
      void pprint();
 };
@@ -43,16 +43,17 @@ void Chromosome::set(vector<double> argv, double res) {
     this->res = res;
 }
 
-void Chromosome::randomize(int argn, double from, double to) {
+void Chromosome::randomize(int argn, double from, double to, double (*fn)(vector<double>)) {
     for (int i = 0; i < argn; ++i)
         argv.push_back(d_random(from, to));
+    res = (*fn)(argv);
 }
 
 void Chromosome::pprint() {
     cout << "fn(";
     for (auto it = argv.begin(); it != argv.end(); ++it)
         cout << *it << ", ";
-    cout << ")" << res << endl;
+    cout << ") = " << res << endl;
 }
 
 int Chromosome::size() {
@@ -64,7 +65,7 @@ class Population {
      vector<Chromosome*> pop;
 
      void set(vector<Chromosome*>);
-     void randomize(int n, int argn, double from, double to);
+     void randomize(int n, int argn, double from, double to, double (*fn)(vector<double>));
      vector<Chromosome*> select();
      void pprint();
      int size();
@@ -74,16 +75,16 @@ void Population::set(vector<Chromosome*> pop) {
     this->pop = pop;
 }
 
-void Population::randomize(int n, int argn, double from, double to) {
+void Population::randomize(int n, int argn, double from, double to, double (*fn)(vector<double>)) {
     for (int i = 0; i < n; ++i) {
         Chromosome* ch = new Chromosome();
-        ch->randomize(argn, from, to);
+        ch->randomize(argn, from, to, fn);
         pop.push_back(ch);
     }
 }
 
 vector<Chromosome*> Population::select() {
-
+    // TODO
 }
 
 int Population::size() {
@@ -95,49 +96,15 @@ void Population::pprint() {
         (*chr)->pprint();
 }
 
-double fn1(double x1, double x2) {
+double fn1(vector<double> argv) {
+    double x1 = argv[0];
+    double x2 = argv[1];
     return 3905.93 - 100 * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2);
 }
 
 int main(int argc, char** argv) {
-    // TODO: check if works
+    Population* pop = new Population();
+    pop->randomize(10, 2, -2.048, 2.048, fn1);
+    pop->pprint();
     return 0;
 }
-
-// double fn2(double x1, double x2) {
-//     return 1 + pow(x1 + x2 + 1, 2)
-// }
-
-// void pprint_point(Point p) {
-//     cout << "fn1(" << p.x << ", " << p.y << ") = " << p.res << endl;
-// }
-
-// void pprint(vector<Point> data) {
-//     for (int i = 0; i < N; ++i)
-//         pprint_point(data[i]);
-// }
-
-// vector<Point> selection(vector<Point> data) {
-//     for (auto it = data.begin(); it != data.end(); ++it) {
-//         // pprint_point(*it);
-//     }
-//     return data;
-// }
-
-// int main(int argc, char** argv) {
-//     vector<Point> data;
-//     for (int i = 0; i < N; ++i) {
-//         double x1 = d_random(-2.048, 2.048);
-//         double x2 = d_random(-2.048, 2.048);
-//         vector<double> X = {x1, x2};
-//         data.push_back(Point{ X, fn1(x,y) });
-//     }
-
-//     // pprint(data);
-
-//     selection(data);
-
-//     // for (int iter = 0; iter < ITERS; ++iter) {
-
-//     // }
-// }
