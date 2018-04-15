@@ -12,8 +12,7 @@ class Population {
      double to;
 
      explicit Population(double (*fn)(std::vector<double>), double from, double to);
-
-     void set(std::vector<Chromosome*>);
+     
      void randomize(int n, int argn);
      void iterate();
 
@@ -23,7 +22,8 @@ class Population {
     private:
      std::vector<Chromosome*> select();
      std::vector<Chromosome*> crossover(std::vector<Chromosome*> selected);
-     std::array<Chromosome*, 2> cross2(Chromosome* c1, Chromosome* c2);
+     int is_in_interval(double);
+     Chromosome* cross2(Chromosome* c1, Chromosome* c2);
      std::vector<Chromosome*> mutate(std::vector<Chromosome*> crossed);
 };
 

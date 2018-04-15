@@ -1,12 +1,8 @@
 #include "utils.h"
-#include <iostream>
+
 #include <random>
 #include <chrono>
 #include <ctime>
-
-using std::string;
-using std::cout;
-using std::endl;
 
 double random_d(double lower_bound, double upper_bound) {
     std::default_random_engine re(std::chrono::system_clock::now().time_since_epoch().count());
