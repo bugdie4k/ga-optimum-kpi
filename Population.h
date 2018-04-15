@@ -8,14 +8,15 @@ class Population {
     public:
      std::vector<Chromosome*> pop;
      double (*fn)(std::vector<double>);
+     int fn_arity;
      bool (*left_is_better)(Chromosome*, Chromosome*);
      double from;
      double to;
      Chromosome* best_ever;
 
-     explicit Population(double (*fn)(std::vector<double>), double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*));
+     explicit Population(double (*fn)(std::vector<double>), int fn_arity, double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*));
      
-     void randomize(int n, int argn);
+     void randomize(int n);
      void set_best_ever();
      void iterate();
      

@@ -23,17 +23,18 @@ ostream &operator << (ostream &os, Population *objp) {
     return os;
 }
 
-Population::Population(double (*fn)(vector<double>), double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*)) {
+Population::Population(double (*fn)(vector<double>), int fn_arity, double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*)) {
     this->fn = fn;
+    this->fn_arity = fn_arity;
     this->from = from;
     this->to = to;
     this->left_is_better = left_is_better;
 }
 
-void Population::randomize(int n, int argn) {
+void Population::randomize(int n) {
     for (int i = 0; i < n; ++i) {
         Chromosome* ch = new Chromosome();
-        ch->randomize(argn, this->from, this->to, this->fn);
+        ch->randomize(this->fn_arity, this->from, this->to, this->fn);
         pop.push_back(ch);
     }
 }
@@ -69,7 +70,7 @@ int Population::is_in_interval(double x) {
 }
 
 Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
-    if (logs >= 2) {
+    if (LOGS >= 2) {
         cout << "  - crossing 2" << endl;
         cout << "  " << c1 << "  " << c2;
     }
@@ -88,14 +89,14 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
         double crossed_arg2 = (3 * x1 - x2) / 2;
         double crossed_arg3 = (3 * x2 - x1) / 2;
 
-        if (logs >=3) {
+        if (LOGS >=3) {
             cout << "    - crossing arguments " << i + 1 << ": " << x1 << ", " << x2 << " -> "
                  << crossed_arg1 << ", " << crossed_arg2 << ", " << crossed_arg3 << endl;
         }
 
         int is_in_interval1 = this->is_in_interval(crossed_arg1);
         if (is_in_interval1 != 0) {
-            if (logs >= 4) {
+            if (LOGS >= 4) {
                 cout << "      - arg exceeds: " << crossed_arg1 << endl;
             }
 
@@ -104,14 +105,14 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
             if (is_in_interval1 == -1)
                 crossed_arg1 = this->from;
 
-            if (logs >= 4) {
+            if (LOGS >= 4) {
                 cout << "      - set to interval bound: " << crossed_arg1 << endl;
             }
         }
 
         int is_in_interval2 = this->is_in_interval(crossed_arg2);
         if (is_in_interval2 != 0) {
-            if (logs >= 4) {
+            if (LOGS >= 4) {
                 cout << "      - arg exceeds: " << crossed_arg2 << endl;
             }
 
@@ -120,14 +121,14 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
             if (is_in_interval2 == -1)
                 crossed_arg2 = this->from;
 
-            if (logs >= 4) {
+            if (LOGS >= 4) {
                 cout << "      - set to interval bound: " << crossed_arg2 << endl;
             }
         }
 
         int is_in_interval3 = this->is_in_interval(crossed_arg3);
         if (is_in_interval3 != 0) {
-            if (logs >= 4) {
+            if (LOGS >= 4) {
                 cout << "      - arg exceeds: " << crossed_arg3 << endl;
             }
 
@@ -136,7 +137,7 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
             if (is_in_interval3 == -1)
                 crossed_arg3 = this->from;
 
-            if (logs >= 4) {
+            if (LOGS >= 4) {
                 cout << "      - set to interval bound: " << crossed_arg3 << endl;
             }
         }
@@ -149,7 +150,7 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
     for (auto c = crossed.begin(); c != crossed.end(); ++c)
         (*c)->res = this->fn((*c)->argv);
 
-    if (logs >= 3) {
+    if (LOGS >= 3) {
         cout << "  - 3 children of 2 crossed:" << endl;
         for (auto c = crossed.begin(); c != crossed.end(); ++c)
             cout << "  " << *c;
@@ -157,7 +158,7 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
 
     std::sort(crossed.begin(), crossed.end(), this->left_is_better);
 
-    if (logs >= 3) {
+    if (LOGS >= 3) {
         cout << "  - leaving among 3 chromosomes:" << endl << "  " << crossed[0] << endl;
     }
 
@@ -165,7 +166,7 @@ Chromosome* Population::cross2(Chromosome* c1, Chromosome* c2) {
 }
 
 vector<Chromosome*> Population::crossover(vector<Chromosome*> parents) {
-    if (logs >= 1) {
+    if (LOGS >= 2) {
         cout << "- selected" << endl;
         pprint_v(parents);
     }
@@ -179,7 +180,7 @@ vector<Chromosome*> Population::crossover(vector<Chromosome*> parents) {
         new_pop_v.push_back(child);
     }
     
-    if (logs >= 1) {
+    if (LOGS >= 1) {
         cout << "- new_population" << endl;
         pprint_v(new_pop_v);
     }
@@ -193,13 +194,24 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
 }
 
 void Population::set_best_ever() {
-    // for (auto it = this->begin(); it != this->end(); ++it) {
-    //     Chromosome* c = *it;
-    //     if (c > )
-    // }
+    if (this->best_ever == nullptr) {
+        this->best_ever = *(this->begin());
+    }
+    
+    for (auto it = this->begin(); it != this->end(); ++it) {
+        Chromosome* c = *it;
+        if (this->left_is_better(c, this->best_ever)) {
+            this->best_ever = c;
+        }
+    }
+
+    if (LOGS >= 1) {
+        cout << "- best ever is set to: " << endl << "" << this->best_ever;
+    }
 }
 
 void Population::iterate() {
     vector<Chromosome*> new_pop_v = this->mutate(this->crossover(this->select()));
     this->pop = new_pop_v;
+    this->set_best_ever();
 }
