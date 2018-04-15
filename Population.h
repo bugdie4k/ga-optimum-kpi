@@ -8,23 +8,28 @@ class Population {
     public:
      std::vector<Chromosome*> pop;
      double (*fn)(std::vector<double>);
+     bool (*left_is_better)(Chromosome*, Chromosome*);
      double from;
      double to;
+     Chromosome* best_ever;
 
-     explicit Population(double (*fn)(std::vector<double>), double from, double to);
+     explicit Population(double (*fn)(std::vector<double>), double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*));
      
      void randomize(int n, int argn);
+     void set_best_ever();
      void iterate();
-
+     
+     std::vector<Chromosome*>::iterator begin() { return this->pop.begin(); };
+     std::vector<Chromosome*>::iterator end() { return this->pop.end(); };
      void pprint();
      int size();
 
     private:
      std::vector<Chromosome*> select();
-     std::vector<Chromosome*> crossover(std::vector<Chromosome*> selected);
+     std::vector<Chromosome*> crossover(std::vector<Chromosome*> selected);     
      int is_in_interval(double);
      Chromosome* cross2(Chromosome* c1, Chromosome* c2);
-     std::vector<Chromosome*> mutate(std::vector<Chromosome*> crossed);
+     std::vector<Chromosome*> mutate(std::vector<Chromosome*> crossed);     
 };
 
 std::ostream &operator << (std::ostream &os, Population &obj);

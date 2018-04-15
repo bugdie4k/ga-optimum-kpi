@@ -18,17 +18,8 @@ std::ostream &operator << (std::ostream &os, Chromosome* objp) {
     return os;
 }
 
-void Chromosome::push(double arg) {
-    // cout << "    pushing arg to chromosome: " << arg << endl;
+void Chromosome::push(double arg) {    
     this->argv.push_back(arg);
-}
-
-vector<double>::iterator Chromosome::begin() {
-    return this->argv.begin();
-}
-
-vector<double>::iterator Chromosome::end() {
-    return this->argv.end();
 }
 
 bool operator < (const Chromosome& l, const Chromosome& r) {

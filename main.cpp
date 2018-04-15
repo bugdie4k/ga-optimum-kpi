@@ -29,20 +29,21 @@ int yn() {
 }
 
 int main(int argc, char** argv) {
-    Population* pop = new Population(fn1, -2.048, 2.048);
+    Population* pop = new Population(fn1, -2.048, 2.048, [](Chromosome* c1, Chromosome* c2) -> bool { return *c1 > *c2; });
     pop->randomize(N, 2);
+    pop->set_best_ever();
 
     cout << "- random ini" << endl;
     pop->pprint();
 
-    while (yn()) {
-        pop->iterate();
-        cout << "-------------------------------------------" << endl;        
-    }        
-    
-    // for (int i = 0; i < ITERS; ++i) {
+    // while (yn()) {
     //     pop->iterate();
-    // }
+    //     cout << "-------------------------------------------" << endl;        
+    // }        
+    
+    for (int i = 0; i < ITERS; ++i) {
+        pop->iterate();
+    }
 
     return 0;
 }
