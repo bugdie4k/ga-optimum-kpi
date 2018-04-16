@@ -32,12 +32,16 @@ int yn() {
     }
 }
 
+bool more(Chromosome* c1, Chromosome* c2) { return *c1 > *c2; }
+bool less(Chromosome* c1, Chromosome* c2) { return *c1 < *c2; }
+
 int main(int argc, char** argv) {
     // test_fns();
     // return 0;
 
-    // Population* pop = new Population(fn1, 2, -2.048, 2.048, [](Chromosome* c1, Chromosome* c2) -> bool { return *c1 > *c2; });
-    Population* pop = new Population(fn2, 2, -2, 2, [](Chromosome* c1, Chromosome* c2) -> bool { return *c1 < *c2; });
+    // Population* pop = new Population(fn1, 2, -2.048, 2.048, more);
+    // Population* pop = new Population(fn2, 2, -2, 2, less);
+    Population* pop = new Population(fn3, 2, -5, 10, less);
 
     pop->randomize(POPULATION_SIZE);
 
@@ -47,29 +51,28 @@ int main(int argc, char** argv) {
     }
 
     pop->set_best_ever();
-
-    int iter;
-    for (iter = 1; iter <= MAX_ITERATIONS; ++iter) {
+    
+    for (pop->iter = 1; pop->iter <= MAX_ITERATIONS; ++pop->iter) {
         if (LOG_LEVEL >= 0) {
-            cout << "   ***   ITER " << iter << "   ***" << endl;
+            cout << "   ***   ITER " << pop->iter << "   ***" << endl;
         }
 
         pop->iterate();
     }
 
-    int cur_iter_limit = iter;
+    int cur_iter_limit = pop->iter;
     while (1) {
-        if (iter >= cur_iter_limit)
-            cur_iter_limit += yn();        
-        if (iter >= cur_iter_limit)
+        if (pop->iter >= cur_iter_limit)
+            cur_iter_limit += yn();
+        if (pop->iter >= cur_iter_limit)
             break;
 
         if (LOG_LEVEL >= 0) {
-            cout << "   ***   ITER " << iter << "   ***" << endl;
+            cout << "   ***   ITER " << pop->iter << "   ***" << endl;
         }
 
         pop->iterate();
-        ++iter;
+        ++pop->iter;
     };
 
     return 0;

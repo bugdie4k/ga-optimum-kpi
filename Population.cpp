@@ -29,6 +29,7 @@ Population::Population(double (*fn)(vector<double>), int fn_arity, double from, 
     this->from = from;
     this->to = to;
     this->left_is_better = left_is_better;
+    this->iter = 0;
 }
 
 void Population::randomize(int n) {
@@ -231,7 +232,7 @@ void Population::set_best_ever() {
     }
 
     if (LOG_LEVEL >= 0) {
-        cout << "- best ever is set to: " << endl << "" << this->best_ever;
+        cout << "- best ever: " << this->best_ever;
     }
 }
 

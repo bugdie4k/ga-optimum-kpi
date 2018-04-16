@@ -13,6 +13,7 @@ class Population {
      double from;
      double to;
      Chromosome* best_ever;
+     int iter;
 
      explicit Population(double (*fn)(std::vector<double>), int fn_arity, double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*));
      

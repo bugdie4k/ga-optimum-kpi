@@ -9,17 +9,26 @@ using std::cout;
 using std::endl;
 
 /*
-De Jong
+DE JONG
+
 WOLFRAM:
-  > maximize
-    3905.93 - 100.0 * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2)
-    if -2.048 <= x1 <= 2.048, -2.048 <= x2 <= 2.048
-  > {{4324.37, {x1 -> 0.00990099, x2 -> -2.048}}, {4324.37, {x1 -> 0.00990099, x2 -> 2.048}}}
-*/
+  COMMAND:
+    maximize
+    3905.93-100.0*(x*x-y*y)-pow(1-x,2)
+    if -2.048<=x<=2.048,-2.048<=y<=2.048
+  RESULT:
+    {{4324.37, {x -> 0.00990099, y -> -2.048}}, {4324.37, {x -> 0.00990099, y -> 2.048}}}
+
+THIS PROGRAM:
+  PARAMS:
+    POPULATION_SIZE = 10; MAX_ITERATIONS = 100; MUTANTS = 1;
+  RESULT:
+    Gets very close to Wolfram's results in 80 - 100 iterations with either positive or negative y
+ */
 double fn1(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    return 3905.93d - 100.0d * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2);
+    return 3905.93 - 100.0 * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2);
 }
 
 void test_fn1() {
@@ -29,19 +38,28 @@ void test_fn1() {
 }
 
 /*
-Goldstein & Price
+GOLDSTEIN & PRICE
+
 WOLFRAM:
-  > minimize
-    (1.0+pow(x1+x2+1.0,2)*(19.0-14.0*x1+3.0*x1*x2-14.0*x2+6.0*x1*x1+3.0*x2*x2))*
-    (30.0+pow(2.0*x1-3.0*x2,2)*(18.0-32.0*x1+12.0*x1*x1+48.0*x2-36.0*x1*x1+27.0*x2*x2))
-    if -2<x1<2,-2<x2<2
-  > {{-880057., {x1 -> 2., x2 -> -1.27921}}, {30., {x1 -> -0.6, x2 -> -0.4}}}
+  COMMAND:
+    minimize
+    (1.0+pow(x+y+1.0,2)*(19.0-14.0*x+3.0*x*x-14.0*y+6.0*x*x+3.0*y*y))*
+    (30.0+pow(2.0*x-3.0*y,2)*(18.0-32.0*x+12.0*x*x+48.0*y-36.0*x*x+27.0*y*y))
+    if -2<=x<=2,-2<=y<=2
+  RESULT:
+    {{-1.452142214744747*^6, {x -> 2, y -> -1.21552}}}
+
+THIS PROGRAM:
+  PARAMS:
+    POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
+  RESULT:
+    Best result: (2, 1.21552) in 369 iterations.
 */
 double fn2(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    double f1 = 1.0d + pow(x1 + x2 + 1.0d, 2) * (19.0d - 14.0d * x1 + 3.0d * pow(x1, 2) - 14.0d * x2 + 6.0d * pow(x1, 2) + 3.0d * pow(x2, 2));
-    double f2 = 30.0d + pow(2.0d * x1 - 3.0d * x2, 2) * (18.0d - 32.0d * x1 + 12.0d * pow(x1, 2) + 48.0d * x2 - 36.0d * pow(x1, 2) + 27.0d * pow(x2, 2));
+    double f1 = 1.0 + pow(x1 + x2 + 1.0, 2) * (19.0 - 14.0 * x1 + 3.0 * pow(x1, 2) - 14.0 * x2 + 6.0 * pow(x1, 2) + 3.0 * pow(x2, 2));
+    double f2 = 30.0 + pow(2.0 * x1 - 3.0 * x2, 2) * (18.0 - 32.0 * x1 + 12.0 * pow(x1, 2) + 48.0 * x2 - 36.0 * pow(x1, 2) + 27.0 * pow(x2, 2));
     return f1 * f2;
 }
 
@@ -51,37 +69,50 @@ void test_fn2() {
     if (LOG_LEVEL >= 0) cout << "fn2 OK" << endl;
 }
 
-// Branin
+/*
+BRANIN
+
+WOLFRAM:
+  COMMAND:
+     minimize
+     pow(y-5.1/4.0*7.0*7.0/22.0/22.0*x*x+5.0*7.0/22.0*x-6.0,2)+10.0*(1.0-7.0/8.0/22.0)*cos(x)+10.0
+     if -5<=x<=10,-5<=y<=10
+  RESULT:
+     {{0.397727, {x -> 3.14159, y -> 2.27599}},
+
+THIS PROGRAM:
+TODO:
+*/
 double fn3(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    return pow(x2 - 5.1d / 4.0d * 7.0d * 7.0d / 22.0d / 22.0d * x1 * x1  + 5.0d * 7.0d / 22.0d * x1 - 6.0d, 2) + 10.0d * (1.0d - 7.0d / 8.0d / 22.0d) * cos(x1) + 10.0d;
+    return pow(x2 - 5.1 / 4.0 * 7.0 * 7.0 / 22.0 / 22.0 * pow(x1, 2)  + 5.0 * 7.0 / 22.0 * x1 - 6.0, 2) + 10.0 * (1.0 - 7.0 / 8.0 / 22.0) * cos(x1) + 10.0;
 }
 
-// Martin & Gaddy
+// MARTIN & GADDY
 double fn4(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    return pow(x1 - x2, 2) + pow((x1 + x2 - 10.0d)/3.0d, 2);
+    return pow(x1 - x2, 2) + pow((x1 + x2 - 10.0)/3.0, 2);
 }
 
-// Rosenbrock 1
+// ROSENBROCK 1
 double fn5(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    return 100.0d * pow(x1 * x1 - x2, 2) + pow(1.0d - x1, 2);
+    return 100.0 * pow(x1 * x1 - x2, 2) + pow(1.0 - x1, 2);
 }
 
-// Rosenbrock 2
+// ROSENBROCK 2
 double fn6(vector<double> xs) {
     double sum = 0;
     for (int i = 0; i < 3; i++) {
-        sum += 100.0d * pow(xs[i] * xs[i] - xs[i+1], 2) + pow(1.0d - xs[i], 2);
+        sum += 100.0 * pow(xs[i] * xs[i] - xs[i+1], 2) + pow(1.0 - xs[i], 2);
     }
     return sum;
 }
 
-// Hypersphere
+// HYPERSPHERE
 double fn7(vector<double> xs) {
     double sum = 0;
     for (int i = 0; i < 6; i++) {
@@ -90,13 +121,13 @@ double fn7(vector<double> xs) {
     return sum;
 }
 
-// Griewangk
+// GRIEWANGK
 double fn8(vector<double> xs) {
     // TODO:
     return 0;
 }
 
 void test_fns() {
-    test_fn1();    
-    test_fn2();    
+    test_fn1();
+    test_fn2();
 }
