@@ -10,15 +10,18 @@ using std::cin;
 using std::endl;
 using std::vector;
 
-static const int N = 10;
-static const int ITERS = 10;
-
-// De Jong
+/*
+De Jong
+WOLFRAM:
+  maximize 3905.93 - 100.0 * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2) if -2.048 <= x1 <= 2.048, -2.048 <= x2 <= 2.048
+  {{4324.37, {x1 -> 0.00990099, x2 -> -2.048}}, {4324.37, {x1 -> 0.00990099, x2 -> 2.048}}}
+*/
 double fn1(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
     return 3905.93d - 100.0d * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2);
 }
+
 
 // Goldstein & Price
 double fn2(vector<double> xs) {
@@ -85,10 +88,11 @@ int yn() {
 }
 
 int main(int argc, char** argv) {
-    Population* pop = new Population(fn1, 2, -2.048, 2.048, [](Chromosome* c1, Chromosome* c2) -> bool { return *c1 > *c2; });
-    pop->randomize(N);
+    // Population* pop = new Population(fn1, 2, -2.048, 2.048, [](Chromosome* c1, Chromosome* c2) -> bool { return *c1 > *c2; });
+    Population* pop = new Population(fn2, 2, -2, 2, [](Chromosome* c1, Chromosome* c2) -> bool { return *c1 < *c2; });
+    pop->randomize(POPULATION_SIZE);
 
-    if (LOGS >= 1) {
+    if (LOG_LEVEL >= 1) {
         cout << "- random ini" << endl;
         pop->pprint();
     }
@@ -96,8 +100,8 @@ int main(int argc, char** argv) {
     pop->set_best_ever();
 
     int iter;
-    for (iter = 0; iter < ITERS; ++iter) {
-        if (LOGS >= 1) {
+    for (iter = 1; iter <= MAX_ITERATIONS; ++iter) {
+        if (LOG_LEVEL >= 0) {
             cout << "   ***   ITER " << iter << "   ***" << endl;
         }
 
@@ -105,11 +109,12 @@ int main(int argc, char** argv) {
     }
 
     while (yn()) {
-        if (LOGS >= 1) {
+        if (LOG_LEVEL >= 0) {
             cout << "   ***   ITER " << iter << "   ***" << endl;
         }
 
         pop->iterate();
+        ++iter;
     }
 
     return 0;
