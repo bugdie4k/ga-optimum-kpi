@@ -4,18 +4,10 @@
 #include <iostream>
 
 // from -1 to infinity
-static const int LOG_LEVEL = 0;
+const int LOG_LEVEL = 0;
 
-// void log(int lvl, std::streambuf s) {
-//     if (lvl >= LOG_LEVEL) {
-//         std::cout << s.rdbuf();
-//     }
-// }
-
-static const int POPULATION_SIZE = 10;
-static const int MAX_ITERATIONS = 100;
-static const int MUTANTS = 1;
-
-// static const
+const int POPULATION_SIZE = 10;
+const int MAX_ITERATIONS = 100;
+const int MUTANTS = 3;
 
 #endif

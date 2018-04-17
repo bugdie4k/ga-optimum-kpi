@@ -23,7 +23,7 @@ THIS PROGRAM:
   PARAMS:
     POPULATION_SIZE = 10; MAX_ITERATIONS = 100; MUTANTS = 1;
   RESULT:
-    Gets very close to Wolfram's results in 80 - 100 iterations with either positive or negative y
+    Gets very close to exact point in 80 - 100 iterations
  */
 double fn1(vector<double> xs) {
     double x1 = xs[0];
@@ -47,13 +47,13 @@ WOLFRAM:
     (30.0+pow(2.0*x-3.0*y,2)*(18.0-32.0*x+12.0*x*x+48.0*y-36.0*x*x+27.0*y*y))
     if -2<=x<=2,-2<=y<=2
   RESULT:
-    {{-1.452142214744747*^6, {x -> 2, y -> -1.21552}}}
+    {-1.452142214744747*^6, {x -> 2, y -> -1.21552}}
 
 THIS PROGRAM:
   PARAMS:
     POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
   RESULT:
-    Best result: (2, 1.21552) in 369 iterations.
+    Finds the exact point.
 */
 double fn2(vector<double> xs) {
     double x1 = xs[0];
@@ -78,10 +78,13 @@ WOLFRAM:
      pow(y-5.1/4.0*7.0*7.0/22.0/22.0*x*x+5.0*7.0/22.0*x-6.0,2)+10.0*(1.0-7.0/8.0/22.0)*cos(x)+10.0
      if -5<=x<=10,-5<=y<=10
   RESULT:
-     {{0.397727, {x -> 3.14159, y -> 2.27599}},
+     {{0.397727, {x -> 3.14159, y -> 2.27599}}, {0.397727, {x -> 9.42478, y -> 2.4718}}}
 
 THIS PROGRAM:
-TODO:
+  PARAMS:
+    POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
+  RESULT:
+    Finds the exact point.
 */
 double fn3(vector<double> xs) {
     double x1 = xs[0];
@@ -89,7 +92,16 @@ double fn3(vector<double> xs) {
     return pow(x2 - 5.1 / 4.0 * 7.0 * 7.0 / 22.0 / 22.0 * pow(x1, 2)  + 5.0 * 7.0 / 22.0 * x1 - 6.0, 2) + 10.0 * (1.0 - 7.0 / 8.0 / 22.0) * cos(x1) + 10.0;
 }
 
-// MARTIN & GADDY
+/*
+MARTIN & GADDY
+
+WOLFRAM:
+  COMMAND:
+  RESULT:
+
+THIS PROGRAM:
+TODO
+*/
 double fn4(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];

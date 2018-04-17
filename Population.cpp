@@ -198,16 +198,66 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
     for (int i = 0; i < MUTANTS; ++i) {
         int random_c = random_i(0, pop.size() - 1);
         Chromosome* c = pop[random_c];
-        int random_argn = random_i(0, c->size() - 1);
+        // mutate random amount of arguments
+        int random_argn = random_i(1, c->size());
 
-        if (LOG_LEVEL >= 2) {
+        if (LOG_LEVEL >= 3) {
             cout << "    - mutating chromosome, arg " << random_argn + 1 << endl << "    " << c;
         }
 
-        c->argv[random_argn] = random_d(this->from, this->to);
+        // TODO: refactor this, do a cycle of refinement. try same step every time
+        for (int j = 0; j < random_argn; ++j) {
+            if (this->same_best_ever < 200 || (this->same_best_ever >= 13200 && this->same_best_ever < 13400)) {
+                c->argv[j] = random_d(this->from, this->to);
+            } else if (this->same_best_ever < 300 || (this->same_best_ever >= 13200 && this->same_best_ever < 13500)) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.01 : 0.01));
+            } else if (this->same_best_ever < 400 || (this->same_best_ever >= 13200)) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.001 : 0.001));
+            } else if (this->same_best_ever < 800) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.0001 : 0.0001));
+            } else if (this->same_best_ever < 1200) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.00001 : 0.00001));
+            } else if (this->same_best_ever < 2000) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.000001 : 0.000001));
+            } else if (this->same_best_ever < 3600) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.0000001 : 0.0000001));
+            } else if (this->same_best_ever < 6800) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.00000001 : 0.00000001));
+            } else if (this->same_best_ever < 13200) {
+                int plus_minus = random_i(0, 1);
+                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.000000001 : 0.000000001));
+            }//  else {
+            //     int plus_minus = random_i(0, 1);
+            //     c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.0000000001 : 0.0000000001));
+            // }
+
+            int is_in_interval1 = this->is_in_interval(c->argv[j]);
+            if (is_in_interval1 != 0) {
+                if (LOG_LEVEL >= 4) {
+                    cout << "      - arg exceeds: " << c->argv[j] << endl;
+                }
+
+                if (is_in_interval1 == 1)
+                    c->argv[j] = this->to;
+                if (is_in_interval1 == -1)
+                    c->argv[j] = this->from;
+
+                if (LOG_LEVEL >= 4) {
+                    cout << "      - set to interval bound: " << c->argv[j] << endl;
+                }
+            }
+
+        }
         c->res = this->fn(c->argv);
 
-        if (LOG_LEVEL >= 2) {
+        if (LOG_LEVEL >= 3) {
             cout << "    - chromosome after mutation" << endl << "    " << c;
         }
     }
@@ -224,15 +274,23 @@ void Population::set_best_ever() {
         this->best_ever = *(this->begin());
     }
 
+    Chromosome* new_best = this->best_ever;
     for (auto it = this->begin(); it != this->end(); ++it) {
         Chromosome* c = *it;
         if (this->left_is_better(c, this->best_ever)) {
-            this->best_ever = c;
+            new_best = c;
         }
+    }
+    if (new_best == this->best_ever) {
+        this->same_best_ever += 1;
+    } else {
+        this->same_best_ever = 0;
+        this->best_ever = new_best;
     }
 
     if (LOG_LEVEL >= 0) {
         cout << "- best ever: " << this->best_ever;
+        cout << "- same for: " << this->same_best_ever << endl;
     }
 }
 

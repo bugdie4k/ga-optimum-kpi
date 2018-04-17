@@ -12,10 +12,11 @@ class Chromosome {
      void set(std::vector<double> argv, double res);
      void randomize(int argn, double from, double to, double (*fn)(std::vector<double>));
 
-     int size();
+     int size() const;
      void pprint();
      friend bool operator < (const Chromosome& l, const Chromosome& r);
      friend bool operator > (const Chromosome& l, const Chromosome& r);
+     friend bool operator == (const Chromosome& l, const Chromosome& r);
      
      std::vector<double>::iterator begin() { return this->argv.begin(); };
      std::vector<double>::iterator end() { return this->argv.end(); };

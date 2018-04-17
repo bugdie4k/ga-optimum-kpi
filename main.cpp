@@ -11,17 +11,20 @@ using std::cin;
 using std::endl;
 using std::vector;
 
-int yn() {
-    while (1) {
+int yn_dialog() {
+    while (true) {
         cout << "Iterate more? (yNUM/n) > ";
         char a;
         cin >> a;
         if (a == 'y' || a == 'Y') {
             std::string s = "";
-            int n;
             getline(cin, s);
-            n = stoi(s, nullptr);
-            return n;
+            try {
+                return stoi(s, nullptr);
+            }
+            catch (const std::invalid_argument &e) {
+                return 1;
+            }
         }
         else if (a == 'n' || a == 'N') {
             return 0;
@@ -37,7 +40,6 @@ bool less(Chromosome* c1, Chromosome* c2) { return *c1 < *c2; }
 
 int main(int argc, char** argv) {
     // test_fns();
-    // return 0;
 
     // Population* pop = new Population(fn1, 2, -2.048, 2.048, more);
     // Population* pop = new Population(fn2, 2, -2, 2, less);
@@ -51,7 +53,7 @@ int main(int argc, char** argv) {
     }
 
     pop->set_best_ever();
-    
+
     for (pop->iter = 1; pop->iter <= MAX_ITERATIONS; ++pop->iter) {
         if (LOG_LEVEL >= 0) {
             cout << "   ***   ITER " << pop->iter << "   ***" << endl;
@@ -61,9 +63,9 @@ int main(int argc, char** argv) {
     }
 
     int cur_iter_limit = pop->iter;
-    while (1) {
+    while (true) {
         if (pop->iter >= cur_iter_limit)
-            cur_iter_limit += yn();
+            cur_iter_limit += yn_dialog();
         if (pop->iter >= cur_iter_limit)
             break;
 
@@ -77,3 +79,4 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
