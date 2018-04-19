@@ -6,10 +6,13 @@
 // from -1 to infinity
 const int LOG_LEVEL = 0;
 
-const int POPULATION_SIZE = 10;
+const int POPULATION_SIZE = 50;
 const int MAX_ITERATIONS = 100;
-const int MUTANTS = 3;
+const int MUTANTS = 15;
 
-const double ERROR = 0.00000000001;
+const double ERROR = 1e-9;
+
+const double DERIVATIVE_DELTA = 1e-12;
+const double DERIVATIVE_ERROR = 1e-9;
 
 #endif

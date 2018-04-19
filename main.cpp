@@ -56,10 +56,10 @@ int main(int argc, char** argv) {
     // Population* pop = new Population(fn2, 2, -2, 2, less);
     // Population* pop = new Population(fn3, 2, -5, 10, less);
     // Population* pop = new Population(fn4, 2, 0, 10, less);    
-    // Population* pop = new Population(fn5, 2, -1.2, 1.2, less); // a
+    Population* pop = new Population(fn5, 2, -1.2, 1.2, less); // a
     // Population* pop = new Population(fn5, 2, -10, 10, less); // b
     // Population* pop = new Population(fn6, 4, -1.2, 1.2, less);
-    Population* pop = new Population(fn7, 6, -5.12, 5.12, less);
+    // Population* pop = new Population(fn7, 6, -5.12, 5.12, less);
 
     pop->randomize(POPULATION_SIZE);
 

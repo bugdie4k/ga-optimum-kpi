@@ -139,6 +139,17 @@ complex<double> fn8(vector<complex<double>> xs) {
     return res;
 }
 
+vector<double> derivatives(double (*fn)(vector<double>), int arity, vector<double> xs) {
+    vector<double> partial_derivatives;
+    for (int i = 0; i < arity; ++i) {
+        vector<double> xs_with_error = xs;
+        xs_with_error[i] += DERIVATIVE_DELTA;
+        double deriv = (fn(xs_with_error) - fn(xs)) / DERIVATIVE_DELTA;
+        partial_derivatives.push_back(deriv);
+    }
+    return partial_derivatives;
+}
+
 void test_fns() {
     test_fn1();
     test_fn2();

@@ -12,6 +12,8 @@ double fn6(std::vector<double>);
 double fn7(std::vector<double>);
 double fn8(std::vector<double>);
 
+std::vector<double> derivatives(double (*fn)(std::vector<double>), int arity, std::vector<double> xs);
+
 void test_fns();
 
 #endif

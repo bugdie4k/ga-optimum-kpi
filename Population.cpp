@@ -1,6 +1,7 @@
 #include "Population.h"
 #include "utils.h"
 #include "config.h"
+#include "fns.h"
 
 #include <assert.h>
 #include <iostream>
@@ -250,7 +251,7 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
     }
 
     if (this->same_best_ever >= 100 && this->iters_on_stage >= 100) {
-        if (this->mutation_stage >= 10)
+        if (this->mutation_stage >= 12)
             this->mutation_stage = 0;
         else
             ++this->mutation_stage;
@@ -279,6 +280,7 @@ void Population::set_best_ever() {
             new_best = c;
         }
     }
+
     if (new_best == this->best_ever) {
         this->same_best_ever += 1;
     } else {
@@ -292,9 +294,11 @@ void Population::set_best_ever() {
     }
 }
 
-// doesn't work and the problem is not with small errors
 vector<Chromosome*> Population::fix_errors(vector<Chromosome*> pop) {
     if (LOG_LEVEL >= 0) {
+        cout << "- fixing errors less then: " << ERROR << endl;
+    }
+    if (LOG_LEVEL >= 2) {
         cout << "  - population before error fixing" << endl << "  ";
         pprint_v(pop, "  ");
     }
@@ -307,11 +311,13 @@ vector<Chromosome*> Population::fix_errors(vector<Chromosome*> pop) {
             // cout << argf << endl;
             if (argf < ERROR)
                 c->argv[i] = std::trunc(c->argv[i]);
+            if (1 - argf < ERROR)
+                c->argv[i] = std::ceil(c->argv[i]);
         }
         c->res = this->fn(c->argv);
     }
 
-    if (LOG_LEVEL >= 0) {
+    if (LOG_LEVEL >= 2) {
         cout << "  - population after error fixing"  << endl << "  ";
         pprint_v(pop, "  ");
     }
@@ -323,9 +329,32 @@ void Population::iterate() {
     vector<Chromosome*> new_pop_v = this->mutate(this->crossover(this->select()));
     // TODO: check if average fitness is better then of previous population
     // and then do something about it
-    // if (this->iter % 50 == 0)
-    //     new_pop_v = this->fix_errors(new_pop_v);
+    if (this->iter % 50 == 0)
+        new_pop_v = this->fix_errors(new_pop_v);
     this->pop = new_pop_v;
     this->set_best_ever();
+    if (this->iter % 50 == 0) {
+        vector<double> derivs = derivatives(this->fn, this->fn_arity, this->best_ever->argv);
+        bool all_close2zero = true;
+        for (auto d = derivs.begin(); d != derivs.end(); ++d) {
+            if (std::abs(*d) >= DERIVATIVE_ERROR) {
+                all_close2zero = false;
+            }
+        }
+        if (all_close2zero) {
+            cout << "    ===   ALL PARTIAL DERIVATIVES ARE CLOSE TO ZERO   ===" << endl;
+            pprint_v(derivs, ", ");
+            cout << endl;
+            cout << "    ===   BEST EVER RESULT   ===" << endl;
+            cout << this->best_ever << endl;
+            exit(0);
+        }
+
+        if (LOG_LEVEL >= 0) {
+            cout << "- partial derivatives: ";
+            pprint_v(derivs, ", ");
+            cout << endl;
+        }
+    }
     ++this->iter;
 }
