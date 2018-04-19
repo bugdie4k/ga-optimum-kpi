@@ -52,14 +52,14 @@ int main(int argc, char** argv) {
     // cout << fn5(xs) << endl;
     // return 0;
 
-    // Population* pop = new Population(fn1, 2, -2.048, 2.048, more);
-    // Population* pop = new Population(fn2, 2, -2, 2, less);
-    // Population* pop = new Population(fn3, 2, -5, 10, less);
-    // Population* pop = new Population(fn4, 2, 0, 10, less);    
-    Population* pop = new Population(fn5, 2, -1.2, 1.2, less); // a
-    // Population* pop = new Population(fn5, 2, -10, 10, less); // b
-    // Population* pop = new Population(fn6, 4, -1.2, 1.2, less);
-    // Population* pop = new Population(fn7, 6, -5.12, 5.12, less);
+    // Population* pop = new Population(fn1, 2, -2.048, 2.048, more); // close
+    // Population* pop = new Population(fn2, 2, -2, 2, less); // exact point with garbadge
+    // Population* pop = new Population(fn3, 2, -5, 10, less); // exact point with garbadge, stops by derivative
+    // Population* pop = new Population(fn4, 2, 0, 10, less); // close, stops by derivative before 5,5
+    // Population* pop = new Population(fn5, 2, -1.2, 1.2, less); // a // exact point, stops by derivative
+    // Population* pop = new Population(fn5, 2, -10, 10, less); // b // exact point, stops by derivative
+    // Population* pop = new Population(fn6, 4, -1.2, 1.2, less); // exact point, stops by derivative
+    Population* pop = new Population(fn7, 6, -5.12, 5.12, less); // exact point, stops by derivative
 
     pop->randomize(POPULATION_SIZE);
 
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
             cout << "   ***   ITER " << pop->iter << "   ***" << endl;
         }
 
-        pop->iterate();        
+        pop->iterate();
     };
 
     return 0;

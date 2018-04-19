@@ -50,8 +50,8 @@ WOLFRAM:
     {-1.452142214744747*^6, {x -> 2, y -> -1.21552}}
 
 THIS PROGRAM:
-  POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
-  Finds the exact point.
+  POPULATION_SIZE = 50; MAX_ITERATIONS = 1000; MUTANTS = 15;
+  The exact point, except for garbage afer the last decimal place
 */
 double fn2(vector<double> xs) {
     double x1 = xs[0];
@@ -79,7 +79,7 @@ WOLFRAM:
      {{0.397727, {x -> 3.14159, y -> 2.27599}}, {0.397727, {x -> 9.42478, y -> 2.4718}}}
 
 THIS PROGRAM:  
-  POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;  
+  POPULATION_SIZE = 50; MAX_ITERATIONS = 1000; MUTANTS = 15;
   Finds the exact point.
 */
 double fn3(vector<double> xs) {
@@ -94,7 +94,7 @@ MARTIN & GADDY, min
 WOLFRAM:  
 
 THIS PROGRAM:  
-  POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
+  POPULATION_SIZE = 50; MAX_ITERATIONS = 1000; MUTANTS = 15;
   Finds the exact (5,5) point
 */
 double fn4(vector<double> xs) {
@@ -142,9 +142,10 @@ complex<double> fn8(vector<complex<double>> xs) {
 vector<double> derivatives(double (*fn)(vector<double>), int arity, vector<double> xs) {
     vector<double> partial_derivatives;
     for (int i = 0; i < arity; ++i) {
-        vector<double> xs_with_error = xs;
-        xs_with_error[i] += DERIVATIVE_DELTA;
-        double deriv = (fn(xs_with_error) - fn(xs)) / DERIVATIVE_DELTA;
+        vector<double> xs_with_delta = xs;
+        xs_with_delta[i] += DERIVATIVE_DELTA;
+        // cout << "(" << fn(xs_with_delta) << " - " << fn(xs) << ")" << "/" << DERIVATIVE_DELTA << endl;
+        double deriv = (fn(xs_with_delta) - fn(xs)) / DERIVATIVE_DELTA;
         partial_derivatives.push_back(deriv);
     }
     return partial_derivatives;
