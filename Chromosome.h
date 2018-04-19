@@ -17,7 +17,7 @@ class Chromosome {
      friend bool operator < (const Chromosome& l, const Chromosome& r);
      friend bool operator > (const Chromosome& l, const Chromosome& r);
      friend bool operator == (const Chromosome& l, const Chromosome& r);
-     
+
      std::vector<double>::iterator begin() { return this->argv.begin(); };
      std::vector<double>::iterator end() { return this->argv.end(); };
      

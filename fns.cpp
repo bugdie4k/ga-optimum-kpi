@@ -3,13 +3,15 @@
 #include <assert.h>
 #include <cmath>
 #include <iostream>
+#include <complex>
 
 using std::vector;
 using std::cout;
 using std::endl;
+using std::complex;
 
 /*
-DE JONG
+DE JONG, max
 
 WOLFRAM:
   COMMAND:
@@ -20,10 +22,8 @@ WOLFRAM:
     {{4324.37, {x -> 0.00990099, y -> -2.048}}, {4324.37, {x -> 0.00990099, y -> 2.048}}}
 
 THIS PROGRAM:
-  PARAMS:
-    POPULATION_SIZE = 10; MAX_ITERATIONS = 100; MUTANTS = 1;
-  RESULT:
-    Gets very close to exact point in 80 - 100 iterations
+  POPULATION_SIZE = 10; MAX_ITERATIONS = 100; MUTANTS = 1;
+  Gets very close to exact point in 80 - 100 iterations
  */
 double fn1(vector<double> xs) {
     double x1 = xs[0];
@@ -38,7 +38,7 @@ void test_fn1() {
 }
 
 /*
-GOLDSTEIN & PRICE
+GOLDSTEIN & PRICE, min
 
 WOLFRAM:
   COMMAND:
@@ -50,10 +50,8 @@ WOLFRAM:
     {-1.452142214744747*^6, {x -> 2, y -> -1.21552}}
 
 THIS PROGRAM:
-  PARAMS:
-    POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
-  RESULT:
-    Finds the exact point.
+  POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
+  Finds the exact point.
 */
 double fn2(vector<double> xs) {
     double x1 = xs[0];
@@ -70,7 +68,7 @@ void test_fn2() {
 }
 
 /*
-BRANIN
+BRANIN, min
 
 WOLFRAM:
   COMMAND:
@@ -80,11 +78,9 @@ WOLFRAM:
   RESULT:
      {{0.397727, {x -> 3.14159, y -> 2.27599}}, {0.397727, {x -> 9.42478, y -> 2.4718}}}
 
-THIS PROGRAM:
-  PARAMS:
-    POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
-  RESULT:
-    Finds the exact point.
+THIS PROGRAM:  
+  POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;  
+  Finds the exact point.
 */
 double fn3(vector<double> xs) {
     double x1 = xs[0];
@@ -93,14 +89,13 @@ double fn3(vector<double> xs) {
 }
 
 /*
-MARTIN & GADDY
+MARTIN & GADDY, min
 
-WOLFRAM:
-  COMMAND:
-  RESULT:
+WOLFRAM:  
 
-THIS PROGRAM:
-TODO
+THIS PROGRAM:  
+  POPULATION_SIZE = 10; MAX_ITERATIONS = 1000; MUTANTS = 1;
+  Finds the exact (5,5) point
 */
 double fn4(vector<double> xs) {
     double x1 = xs[0];
@@ -108,14 +103,18 @@ double fn4(vector<double> xs) {
     return pow(x1 - x2, 2) + pow((x1 + x2 - 10.0)/3.0, 2);
 }
 
-// ROSENBROCK 1
+/*
+ROSENBROCK 1, min
+a: 
+b: comes close
+*/ 
 double fn5(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
     return 100.0 * pow(x1 * x1 - x2, 2) + pow(1.0 - x1, 2);
 }
 
-// ROSENBROCK 2
+// ROSENBROCK 2, min
 double fn6(vector<double> xs) {
     double sum = 0;
     for (int i = 0; i < 3; i++) {
@@ -124,7 +123,7 @@ double fn6(vector<double> xs) {
     return sum;
 }
 
-// HYPERSPHERE
+// HYPERSPHERE, min
 double fn7(vector<double> xs) {
     double sum = 0;
     for (int i = 0; i < 6; i++) {
@@ -133,10 +132,11 @@ double fn7(vector<double> xs) {
     return sum;
 }
 
-// GRIEWANGK
-double fn8(vector<double> xs) {
+// GRIEWANGK, max
+complex<double> fn8(vector<complex<double>> xs) {
     // TODO:
-    return 0;
+    complex<double> res(0,0);
+    return res;
 }
 
 void test_fns() {

@@ -1,6 +1,8 @@
 #include "Chromosome.h"
 #include "utils.h"
+
 #include <iostream>
+#include <iomanip>
 
 using std::vector;
 using std::cout;
@@ -24,7 +26,7 @@ void Chromosome::randomize(int argn, double from, double to, double (*fn)(vector
 std::ostream &operator << (std::ostream &os, Chromosome &obj) {
     os << "fn(";
     pprint_v(obj.argv, ", ");
-    os << ") = " << obj.res << endl;
+    os << ") = " << std::setprecision(20) << obj.res << endl;
     return os;
 }
 

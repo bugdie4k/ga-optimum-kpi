@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 using std::vector;
 using std::array;
@@ -30,6 +31,7 @@ Population::Population(double (*fn)(vector<double>), int fn_arity, double from, 
     this->to = to;
     this->left_is_better = left_is_better;
     this->iter = 0;
+    this->mutation_stage = 0;
 }
 
 void Population::randomize(int n) {
@@ -189,10 +191,22 @@ vector<Chromosome*> Population::crossover(vector<Chromosome*> parents) {
     return new_pop_v;
 }
 
+double mutate_arg_on_stage(double arg, int stage) {
+    int sign = (random_i(0, 1)) ? 1 : -1;
+    double abs_delta = pow(0.1, stage);
+    // return random_d(arg, arg + sign * abs_delta);
+    return arg + sign * abs_delta;
+}
+
 vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
-    if (LOG_LEVEL >= 2) {
+    if (LOG_LEVEL >= 3) {
         cout << "  - before mutation" << endl << "  ";
         pprint_v(pop, "  ");
+    }
+
+    if (LOG_LEVEL >= 0) {
+        cout << "- mutation stage: " << this->mutation_stage << endl;
+        cout << "- iters on stage: " << this->iters_on_stage << endl;
     }
 
     for (int i = 0; i < MUTANTS; ++i) {
@@ -202,59 +216,32 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
         int random_argn = random_i(1, c->size());
 
         if (LOG_LEVEL >= 3) {
-            cout << "    - mutating chromosome, arg " << random_argn + 1 << endl << "    " << c;
+            cout << "    - mutating chromosome, mutating " << random_argn << " arguments" << endl << "    " << c;
         }
 
-        // TODO: refactor this, do a cycle of refinement. try same step every time
         for (int j = 0; j < random_argn; ++j) {
-            if (this->same_best_ever < 200 || (this->same_best_ever >= 13200 && this->same_best_ever < 13400)) {
+            if (this->mutation_stage == 0)
                 c->argv[j] = random_d(this->from, this->to);
-            } else if (this->same_best_ever < 300 || (this->same_best_ever >= 13200 && this->same_best_ever < 13500)) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.01 : 0.01));
-            } else if (this->same_best_ever < 400 || (this->same_best_ever >= 13200)) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.001 : 0.001));
-            } else if (this->same_best_ever < 800) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.0001 : 0.0001));
-            } else if (this->same_best_ever < 1200) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.00001 : 0.00001));
-            } else if (this->same_best_ever < 2000) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.000001 : 0.000001));
-            } else if (this->same_best_ever < 3600) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.0000001 : 0.0000001));
-            } else if (this->same_best_ever < 6800) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.00000001 : 0.00000001));
-            } else if (this->same_best_ever < 13200) {
-                int plus_minus = random_i(0, 1);
-                c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.000000001 : 0.000000001));
-            }//  else {
-            //     int plus_minus = random_i(0, 1);
-            //     c->argv[j] = random_d(c->argv[j], c->argv[j] + ((plus_minus) ? -0.0000000001 : 0.0000000001));
-            // }
+            else
+                c->argv[j] = mutate_arg_on_stage(c->argv[j], this->mutation_stage);
 
-            int is_in_interval1 = this->is_in_interval(c->argv[j]);
-            if (is_in_interval1 != 0) {
+            int is_in_interval = this->is_in_interval(c->argv[j]);
+            if (is_in_interval != 0) {
                 if (LOG_LEVEL >= 4) {
                     cout << "      - arg exceeds: " << c->argv[j] << endl;
                 }
 
-                if (is_in_interval1 == 1)
+                if (is_in_interval == 1)
                     c->argv[j] = this->to;
-                if (is_in_interval1 == -1)
+                if (is_in_interval == -1)
                     c->argv[j] = this->from;
 
                 if (LOG_LEVEL >= 4) {
                     cout << "      - set to interval bound: " << c->argv[j] << endl;
                 }
             }
-
         }
+
         c->res = this->fn(c->argv);
 
         if (LOG_LEVEL >= 3) {
@@ -262,10 +249,21 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
         }
     }
 
+    if (this->same_best_ever >= 100 && this->iters_on_stage >= 100) {
+        if (this->mutation_stage >= 10)
+            this->mutation_stage = 0;
+        else
+            ++this->mutation_stage;
+        this->iters_on_stage = 0;
+    } else {
+        ++this->iters_on_stage;
+    }
+
     if (LOG_LEVEL >= 2) {
         cout << "  - after mutation" << endl << "  ";
         pprint_v(pop, "  ");
     }
+
     return pop;
 }
 
@@ -294,8 +292,40 @@ void Population::set_best_ever() {
     }
 }
 
+// doesn't work and the problem is not with small errors
+vector<Chromosome*> Population::fix_errors(vector<Chromosome*> pop) {
+    if (LOG_LEVEL >= 0) {
+        cout << "  - population before error fixing" << endl << "  ";
+        pprint_v(pop, "  ");
+    }
+
+    for (auto it = pop.begin(); it != pop.end(); ++it) {
+        Chromosome* c = *it;
+        for (int i = 0; i < c->size(); ++i) {
+            double *intpart;
+            double argf = std::abs(std::modf(c->argv[i], intpart));
+            // cout << argf << endl;
+            if (argf < ERROR)
+                c->argv[i] = std::trunc(c->argv[i]);
+        }
+        c->res = this->fn(c->argv);
+    }
+
+    if (LOG_LEVEL >= 0) {
+        cout << "  - population after error fixing"  << endl << "  ";
+        pprint_v(pop, "  ");
+    }
+
+    return pop;
+}
+
 void Population::iterate() {
     vector<Chromosome*> new_pop_v = this->mutate(this->crossover(this->select()));
+    // TODO: check if average fitness is better then of previous population
+    // and then do something about it
+    // if (this->iter % 50 == 0)
+    //     new_pop_v = this->fix_errors(new_pop_v);
     this->pop = new_pop_v;
     this->set_best_ever();
+    ++this->iter;
 }

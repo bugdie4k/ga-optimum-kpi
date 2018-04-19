@@ -10,4 +10,6 @@ const int POPULATION_SIZE = 10;
 const int MAX_ITERATIONS = 100;
 const int MUTANTS = 3;
 
+const double ERROR = 0.00000000001;
+
 #endif
