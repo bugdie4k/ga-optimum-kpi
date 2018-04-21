@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <stdlib.h>
 
 using std::cout;
 using std::cin;
@@ -38,9 +39,8 @@ int more_iterations_dialog() {
 bool more(Chromosome* c1, Chromosome* c2) { return *c1 > *c2; }
 bool less(Chromosome* c1, Chromosome* c2) { return *c1 < *c2; }
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
     // test_fns();
-
 
     // (5,5)->0
     // vector<double> xs = {5,5};
@@ -52,14 +52,23 @@ int main(int argc, char** argv) {
     // cout << fn5(xs) << endl;
     // return 0;
 
-    // Population* pop = new Population(fn1, 2, -2.048, 2.048, more); // close
-    // Population* pop = new Population(fn2, 2, -2, 2, less); // exact point with garbadge
-    // Population* pop = new Population(fn3, 2, -5, 10, less); // exact point with garbadge, stops by derivative
-    // Population* pop = new Population(fn4, 2, 0, 10, less); // close, stops by derivative before 5,5
-    // Population* pop = new Population(fn5, 2, -1.2, 1.2, less); // a // exact point, stops by derivative
-    // Population* pop = new Population(fn5, 2, -10, 10, less); // b // exact point, stops by derivative
-    // Population* pop = new Population(fn6, 4, -1.2, 1.2, less); // exact point, stops by derivative
-    Population* pop = new Population(fn7, 6, -5.12, 5.12, less); // exact point, stops by derivative
+    Population* pop1 = new Population(fn1, 2, -2.048, 2.048, more); // close
+    Population* pop2 = new Population(fn2, 2, -2, 2, less); // exact point with garbadge
+    Population* pop3 = new Population(fn3, 2, -5, 10, less); // exact point with garbadge, stops by derivative
+    Population* pop4 = new Population(fn4, 2, 0, 10, less); // close, stops by derivative before 5,5
+    Population* pop5 = new Population(fn5, 2, -1.2, 1.2, less); // a // exact point, stops by derivative
+    Population* pop6 = new Population(fn5, 2, -10, 10, less); // b // exact point, stops by derivative
+    Population* pop7 = new Population(fn6, 4, -1.2, 1.2, less); // exact point, stops by derivative
+    Population* pop8 = new Population(fn7, 6, -5.12, 5.12, less); // exact point, stops by derivative
+    vector<Population*> pops = { pop1, pop2, pop3, pop4, pop5, pop6, pop7, pop8 };
+
+    int fn_num = 0;
+    if (argc == 2) {
+        fn_num = std::strtol(argv[1], nullptr, 0) - 1;
+    }
+
+    cout << fn_num;
+    Population* pop = pops[fn_num];
 
     pop->randomize(POPULATION_SIZE);
 

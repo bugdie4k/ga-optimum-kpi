@@ -19,11 +19,11 @@ class Population {
      int iters_on_stage = 0;
 
      explicit Population(double (*fn)(std::vector<double>), int fn_arity, double from, double to, bool (*left_is_better)(Chromosome*, Chromosome*));
-     
+
      void randomize(int n);
      void set_best_ever();
      void iterate();
-     
+
      std::vector<Chromosome*>::iterator begin() { return this->pop.begin(); };
      std::vector<Chromosome*>::iterator end() { return this->pop.end(); };
      void pprint();
@@ -31,11 +31,11 @@ class Population {
 
     private:
      std::vector<Chromosome*> select();
-     std::vector<Chromosome*> crossover(std::vector<Chromosome*> selected);     
+     std::vector<Chromosome*> crossover(std::vector<Chromosome*> selected);
      int is_in_interval(double);
      Chromosome* cross2(Chromosome* c1, Chromosome* c2);
      std::vector<Chromosome*> fix_errors(std::vector<Chromosome*> pop);
-     std::vector<Chromosome*> mutate(std::vector<Chromosome*> crossed);     
+     std::vector<Chromosome*> mutate(std::vector<Chromosome*> crossed);
 };
 
 std::ostream &operator << (std::ostream &os, Population &obj);
