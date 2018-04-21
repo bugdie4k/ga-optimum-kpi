@@ -6,6 +6,7 @@
 
 class Population {
     public:
+     std::vector<Chromosome*> prev_pop;
      std::vector<Chromosome*> pop;
      double (*fn)(std::vector<double>);
      int fn_arity;

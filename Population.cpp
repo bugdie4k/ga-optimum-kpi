@@ -308,11 +308,12 @@ vector<Chromosome*> Population::fix_errors(vector<Chromosome*> pop) {
         for (int i = 0; i < c->size(); ++i) {
             double *intpart;
             double argf = std::abs(std::modf(c->argv[i], intpart));
-            // cout << argf << endl;
-            if (argf < ERROR)
-                c->argv[i] = std::trunc(c->argv[i]);
-            if (1 - argf < ERROR)
-                c->argv[i] = std::ceil(c->argv[i]);
+            argf = std::ceil(argf * REVERSE_ERROR) / REVERSE_ERROR;
+            c->argv[i] = *intpart + argf;
+            // if (argf < ERROR)
+            //     c->argv[i] = std::trunc(c->argv[i]);
+            // if (1 - argf < ERROR)
+            //     c->argv[i] = std::ceil(c->argv[i]);
         }
         c->res = this->fn(c->argv);
     }
@@ -331,6 +332,8 @@ void Population::iterate() {
     // and then do something about it
     if (this->iter % 50 == 0)
         new_pop_v = this->fix_errors(new_pop_v);
+
+    this->prev_pop = this->pop;
     this->pop = new_pop_v;
     this->set_best_ever();
     if (this->iter % 50 == 0) {
