@@ -3,32 +3,17 @@
 #include <assert.h>
 #include <cmath>
 #include <iostream>
-#include <complex>
 
 using std::vector;
 using std::cout;
 using std::endl;
-using std::complex;
 
-/*
-DE JONG, max
-
-WOLFRAM:
-  COMMAND:
-    maximize
-    3905.93-100.0*(x*x-y*y)-pow(1-x,2)
-    if -2.048<=x<=2.048,-2.048<=y<=2.048
-  RESULT:
-    {{4324.37, {x -> 0.00990099, y -> -2.048}}, {4324.37, {x -> 0.00990099, y -> 2.048}}}
-
-THIS PROGRAM:
-  POPULATION_SIZE = 10; MAX_ITERATIONS = 100; MUTANTS = 1;
-  Gets very close to exact point in 80 - 100 iterations
- */
+// DE JONG, max
+// 1, 1 -> 3905.93
 double fn1(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    return 3905.93 - 100.0 * (pow(x1, 2) - pow(x2, 2)) - pow(1 - x1, 2);
+    return 3905.93 - 100.0 * pow(x1 * x1 - x2, 2) - pow(1 - x1, 2);
 }
 
 void test_fn1() {
@@ -37,27 +22,13 @@ void test_fn1() {
     if (LOG_LEVEL >= 0) cout << "fn1 OK" << endl;
 }
 
-/*
-GOLDSTEIN & PRICE, min
-
-WOLFRAM:
-  COMMAND:
-    minimize
-    (1.0+pow(x+y+1.0,2)*(19.0-14.0*x+3.0*x*x-14.0*y+6.0*x*x+3.0*y*y))*
-    (30.0+pow(2.0*x-3.0*y,2)*(18.0-32.0*x+12.0*x*x+48.0*y-36.0*x*x+27.0*y*y))
-    if -2<=x<=2,-2<=y<=2
-  RESULT:
-    {-1.452142214744747*^6, {x -> 2, y -> -1.21552}}
-
-THIS PROGRAM:
-  POPULATION_SIZE = 50; MAX_ITERATIONS = 1000; MUTANTS = 15;
-  The exact point, except for garbage afer the last decimal place
-*/
+// GOLDSTEIN & PRICE, min
+// 0, -1 -> 3
 double fn2(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    double f1 = 1.0 + pow(x1 + x2 + 1.0, 2) * (19.0 - 14.0 * x1 + 3.0 * pow(x1, 2) - 14.0 * x2 + 6.0 * pow(x1, 2) + 3.0 * pow(x2, 2));
-    double f2 = 30.0 + pow(2.0 * x1 - 3.0 * x2, 2) * (18.0 - 32.0 * x1 + 12.0 * pow(x1, 2) + 48.0 * x2 - 36.0 * pow(x1, 2) + 27.0 * pow(x2, 2));
+    double f1 = 1.0 + pow(x1 + x2 + 1.0, 2) * (19.0 - 14.0 * x1 + 3.0 * x1 * x1 - 14.0 * x2 + 6.0 * x1 * x2 + 3.0 * x2 * x2);
+    double f2 = 30.0 + pow(2.0 * x1 - 3.0 * x2, 2) * (18.0 - 32.0 * x1 + 12.0 * x1 * x1 + 48.0 * x2 - 36.0 * x1 * x2 + 27.0 * x2 * x2);
     return f1 * f2;
 }
 
@@ -67,36 +38,14 @@ void test_fn2() {
     if (LOG_LEVEL >= 0) cout << "fn2 OK" << endl;
 }
 
-/*
-BRANIN, min
-
-WOLFRAM:
-  COMMAND:
-     minimize
-     pow(y-5.1/4.0*7.0*7.0/22.0/22.0*x*x+5.0*7.0/22.0*x-6.0,2)+10.0*(1.0-7.0/8.0/22.0)*cos(x)+10.0
-     if -5<=x<=10,-5<=y<=10
-  RESULT:
-     {{0.397727, {x -> 3.14159, y -> 2.27599}}, {0.397727, {x -> 9.42478, y -> 2.4718}}}
-
-THIS PROGRAM:  
-  POPULATION_SIZE = 50; MAX_ITERATIONS = 1000; MUTANTS = 15;
-  Finds the exact point.
-*/
+// BRANIN, min
 double fn3(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
-    return pow(x2 - 5.1 / 4.0 * 7.0 * 7.0 / 22.0 / 22.0 * pow(x1, 2)  + 5.0 * 7.0 / 22.0 * x1 - 6.0, 2) + 10.0 * (1.0 - 7.0 / 8.0 / 22.0) * cos(x1) + 10.0;
+    return pow(x2 - 5.1 / 4.0 * 7.0 * 7.0 / 22.0 / 22.0 * x1 * x1  + 5.0 * 7.0 / 22.0 * x1 - 6.0, 2) + 10.0 * (1.0 - 7.0 / 8.0 / 22.0) * cos(x1) + 10.0;
 }
 
-/*
-MARTIN & GADDY, min
-
-WOLFRAM:  
-
-THIS PROGRAM:  
-  POPULATION_SIZE = 50; MAX_ITERATIONS = 1000; MUTANTS = 15;
-  Finds the exact (5,5) point
-*/
+// MARTIN & GADDY, min
 double fn4(vector<double> xs) {
     double x1 = xs[0];
     double x2 = xs[1];
@@ -133,10 +82,16 @@ double fn7(vector<double> xs) {
 }
 
 // GRIEWANGK, max
-complex<double> fn8(vector<complex<double>> xs) {
-    // TODO:
-    complex<double> res(0,0);
-    return res;
+double fn8(vector<double> xs) {
+    double mul = 1, sum = 0;
+      for (int i = 0; i < 10; i++) {
+        sum += xs[i] * xs[i];
+      }
+      sum /= 4000.0f;
+      for (int i = 0; i < 10; i++) {
+        mul *= cos(xs[i] / sqrt(i+1));
+      }
+      return 1.0 / (0.1 + sum - mul + 1.0);
 }
 
 vector<double> derivatives(double (*fn)(vector<double>), int arity, vector<double> xs) {

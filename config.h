@@ -15,5 +15,6 @@ const double REVERSE_ERROR = 1000000000000;
 
 const double DERIVATIVE_DELTA = 1e-12;
 const double DERIVATIVE_ERROR = 1e-9;
+const bool CALC_DERIVATIVE = false;
 
 #endif

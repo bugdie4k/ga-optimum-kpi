@@ -6,8 +6,11 @@
 
 class Population {
     public:
-     std::vector<Chromosome*> prev_pop;
+     std::vector<Chromosome*> prev_pop;     
      std::vector<Chromosome*> pop;
+     bool first = true;
+     double prev_avg_fitness;
+     double avg_fitness;
      double (*fn)(std::vector<double>);
      int fn_arity;
      bool (*left_is_better)(Chromosome*, Chromosome*);
@@ -37,6 +40,7 @@ class Population {
      Chromosome* cross2(Chromosome* c1, Chromosome* c2);
      std::vector<Chromosome*> fix_errors(std::vector<Chromosome*> pop);
      std::vector<Chromosome*> mutate(std::vector<Chromosome*> crossed);
+     void calc_avg_fitness();
 };
 
 std::ostream &operator << (std::ostream &os, Population &obj);

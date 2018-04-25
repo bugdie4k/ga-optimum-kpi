@@ -326,17 +326,43 @@ vector<Chromosome*> Population::fix_errors(vector<Chromosome*> pop) {
     return pop;
 }
 
-void Population::iterate() {
-    vector<Chromosome*> new_pop_v = this->mutate(this->crossover(this->select()));
-    // TODO: check if average fitness is better then of previous population
-    // and then do something about it
-    if (this->iter % 50 == 0)
-        new_pop_v = this->fix_errors(new_pop_v);
+void Population::calc_avg_fitness() {
+    this->prev_avg_fitness = this->avg_fitness;
+    double avg = 0;
+    for (auto it = this->begin(); it != this->end(); ++it) {
+        Chromosome* c = *it;
+        avg += abs(this->best_ever->res - c->res);
+    }
+    this->avg_fitness =  avg / this->size();
+}
 
-    this->prev_pop = this->pop;
-    this->pop = new_pop_v;
+void Population::iterate() {
+    if (this->first) {
+        this->calc_avg_fitness();
+        this->prev_avg_fitness = this->avg_fitness;
+        this->first = false;
+    }
+    while (true){
+        vector<Chromosome *> new_pop_v = this->mutate(this->crossover(this->select()));
+        // TODO: check if average fitness is better then of previous population
+        // and then do something about it
+        if (this->iter % 50 == 0)
+            new_pop_v = this->fix_errors(new_pop_v);
+        vector<Chromosome*> prev_prev_pop = this->prev_pop;
+        this->prev_pop = this->pop;
+        this->pop = new_pop_v;
+        this->calc_avg_fitness();
+        if (this->avg_fitness > this->prev_avg_fitness) {
+            this->pop = this->prev_pop;
+            this->prev_pop = prev_prev_pop;
+            ++this->iter;
+            continue;
+        }
+        break;
+    }
     this->set_best_ever();
-    if (this->iter % 50 == 0) {
+    // KLUDGE KLUDGE KLUDGES ARE EVERYWHERE
+    if (CALC_DERIVATIVE && this->iter % 200 == 0) {
         vector<double> derivs = derivatives(this->fn, this->fn_arity, this->best_ever->argv);
         bool all_close2zero = true;
         for (auto d = derivs.begin(); d != derivs.end(); ++d) {
