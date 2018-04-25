@@ -60,7 +60,8 @@ int main(int argc, char* argv[]) {
     Population* pop6 = new Population(fn5, 2, -10, 10, less); // b // exact point, stops by derivative
     Population* pop7 = new Population(fn6, 4, -1.2, 1.2, less); // exact point, stops by derivative
     Population* pop8 = new Population(fn7, 6, -5.12, 5.12, less); // exact point, stops by derivative
-    vector<Population*> pops = { pop1, pop2, pop3, pop4, pop5, pop6, pop7, pop8 };
+    Population* pop9 = new Population(fn8, 10, -512, 512, more); // exact point, stops by derivative
+    vector<Population*> pops = { pop1, pop2, pop3, pop4, pop5, pop6, pop7, pop8, pop9 };
 
     int fn_num = 0;
     if (argc == 2) {

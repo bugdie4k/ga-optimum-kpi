@@ -295,7 +295,7 @@ void Population::set_best_ever() {
 }
 
 vector<Chromosome*> Population::fix_errors(vector<Chromosome*> pop) {
-    if (LOG_LEVEL >= 0) {
+    if (LOG_LEVEL >= 1) {
         cout << "- fixing errors less then: " << ERROR << endl;
     }
     if (LOG_LEVEL >= 2) {
