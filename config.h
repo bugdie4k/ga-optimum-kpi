@@ -6,9 +6,13 @@
 // from -1 to infinity
 const int LOG_LEVEL = 0;
 
+/// IMPORTANT
 const int POPULATION_SIZE = 50;
-const int MAX_ITERATIONS = 100;
 const int MUTANTS = 15;
+
+const int MAX_ITERATIONS = 100;
+
+const bool SINGLE_MUTATION_STAGE = false;
 
 const double ERROR = 1e-12;
 const double REVERSE_ERROR = 1000000000000;

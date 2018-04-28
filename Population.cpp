@@ -221,7 +221,7 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
         }
 
         for (int j = 0; j < random_argn; ++j) {
-            if (this->mutation_stage == 0)
+            if (this->mutation_stage == 0 || SINGLE_MUTATION_STAGE)
                 c->argv[j] = random_d(this->from, this->to);
             else
                 c->argv[j] = mutate_arg_on_stage(c->argv[j], this->mutation_stage);
@@ -250,7 +250,7 @@ vector<Chromosome*> Population::mutate(vector<Chromosome*> pop) {
         }
     }
 
-    if (this->same_best_ever >= 100 && this->iters_on_stage >= 100) {
+    if (this->same_best_ever >= 100 && this->iters_on_stage >= 100 && !SINGLE_MUTATION_STAGE) {
         if (this->mutation_stage >= 12)
             this->mutation_stage = 0;
         else
@@ -344,10 +344,8 @@ void Population::iterate() {
     }
     while (true){
         vector<Chromosome *> new_pop_v = this->mutate(this->crossover(this->select()));
-        // TODO: check if average fitness is better then of previous population
-        // and then do something about it
-        if (this->iter % 50 == 0)
-            new_pop_v = this->fix_errors(new_pop_v);
+        /* if (this->iter % 50 == 0)
+            new_pop_v = this->fix_errors(new_pop_v); */
         vector<Chromosome*> prev_prev_pop = this->prev_pop;
         this->prev_pop = this->pop;
         this->pop = new_pop_v;
