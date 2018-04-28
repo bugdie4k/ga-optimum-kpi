@@ -344,6 +344,7 @@ void Population::iterate() {
     }
     while (true){
         vector<Chromosome *> new_pop_v = this->mutate(this->crossover(this->select()));
+        // GIVES SEGFAULT WITH -O3 ¯\_(ツ)_/¯
         /* if (this->iter % 50 == 0)
             new_pop_v = this->fix_errors(new_pop_v); */
         vector<Chromosome*> prev_prev_pop = this->prev_pop;

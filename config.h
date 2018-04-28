@@ -10,7 +10,7 @@ const int LOG_LEVEL = 0;
 const int POPULATION_SIZE = 50;
 const int MUTANTS = 15;
 
-const int MAX_ITERATIONS = 100;
+const int MAX_ITERATIONS = 1000;
 
 const bool SINGLE_MUTATION_STAGE = false;
 
